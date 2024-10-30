@@ -142,7 +142,7 @@ install.packages("scatterplot3d")
 
 This software can then be installed using the following code:
 ```bash
-git clone https://github.com/ClaireDunican/VeloCD
+git clone https://github.com/DrClaireDunican/VeloCD
 ```
 
 
@@ -184,13 +184,6 @@ The algorithm will also ask if you have multiple metadata files and the type of 
 
 
 Once all questions have been answered, the program will begin running the RNA velocity and prediction analysis. A "Results" folder will then be generated in the same directory as the input files with output .csv "Files" and fate maps separated. The suffix of the file set will be used to separate the results of each dataset.
-## Examples
-
-Example files for this analysis are given under the sub-directory /ExampleData. It is semi-simulated but mostly based on a dataset of intra-erythrocytic life-cycle expression of specific genes in *Plasmodium falciparum* parasites (European Nucleotide Archive ID: PRJEB31535). It was chosen as an example analysis for its simplicity, where RNA velocity arrows from earlier time-point samples point are predicted to towards later ones.
-
-An example PCA-based fate map of this dataset is given below. It was generated using 3 PCs, and a transition probability number of neighbours value of 15, it clearly shows the expected pattern of gene expression change across time. All result files for this analysis are also provided.
-
-![Figure.1](/media/claired/906143b9-524c-4abe-8428-6fc9300eb700/VeloCD/ExamplePCA.jpg)
 
 ## Pre-processing Pipeline
 
