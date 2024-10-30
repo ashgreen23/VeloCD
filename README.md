@@ -146,7 +146,6 @@ git clone https://github.com/DrClaireDunican/VeloCD
 ```
 
 
-
 ## Operating Instructions
 VeloCD is run from the bash command line via:
 
@@ -174,7 +173,7 @@ The program will then ask for you to specify some values or ranges for its hyper
 
 **Fate Map Visualisation Questions**
 
-The next set of options are relating to the visualisation of the RNA velocity fate maps. The first question will ask if you would like GIFS of the 3-dimensional plots to be generated. This is a relatively slow step of the algorithm. It will also ask if you wish to have the points shaped by the metadata feature in the first or second metadata file. Lastly, it will ask for a colour map from: https://matplotlib.org/stable/tutorials/colors/colormaps.html, to colour the sample-points on the fate map - based on their group in the first metadata file.
+The next set of options relate to the visualisation of the RNA velocity fate maps. The first question will ask if you would like GIFS of the 3-dimensional plots to be generated. This is a relatively slow step of the algorithm. It will also ask if you wish to have the points shaped by the metadata feature in the first or second metadata file. Lastly, it will ask for a colour map from: https://matplotlib.org/stable/tutorials/colors/colormaps.html, to colour the sample-points on the fate map - based on their group in the first metadata file.
 
 **Metadata Questions**
 
@@ -182,12 +181,11 @@ The algorithm will also ask if you have multiple metadata files and the type of 
 
 **Result Output**
 
-
 Once all questions have been answered, the program will begin running the RNA velocity and prediction analysis. A "Results" folder will then be generated in the same directory as the input files with output .csv "Files" and fate maps separated. The suffix of the file set will be used to separate the results of each dataset.
 
 ## Pre-processing Pipeline
 
-This algorithm can be used to analyse any dataset given the data is in the form of 3-4 CSV-format files of the same general form as the examples given. The expression files should consist of sample columns and gene rows, with the first column "ID" containing the gene ID's. These should be in the same order between expression files. Spliced and unspliced transcript expression should be pre-normalised and log₂ (+1) transformed.
+This algorithm can be used to analyse any dataset given the data is in the form of 3-4 CSV-format files of the same general form as the examples given. The expression files should consist of sample columns and gene rows, with the first column "ID" containing the gene ID's. These should be in the same order between expression files. Spliced and unspliced transcript expression should be pre-normalised and log₂ (+1) transformed. Examples are given in /ExampleFiles. Code for these preprocessing steps are given in /Preprocessing.
 
 The metadata files should consist of two columns, the first "Sample" has sample names matching the order of the columns in the expression set. The second column "Group" is the metadata feature you would like to predict.
 
