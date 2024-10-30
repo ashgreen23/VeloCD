@@ -142,7 +142,7 @@ install.packages("scatterplot3d")
 
 This software can then be installed using the following code:
 ```bash
-git clone https://github.com/DrClaireDunican/VeloCD
+git clone https://github.com/DrClaireDunican/VeloCD.git
 ```
 
 
