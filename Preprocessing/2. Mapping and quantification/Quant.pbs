@@ -1,0 +1,42 @@
+#PBS -l walltime=24:00:00
+#PBS -l select=1:ncpus=48:mem=124gb:ompthreads=48
+
+module load python
+module load java
+module load subread
+
+py_script_read_quant="
+import glob, os
+file_list = []
+os.chdir(r'') #location of the mapped .bam files
+for file in glob.glob('*.bam'):
+    file_list.append(file)
+file_list= sorted(file_list)
+bam_files = ' '.join(str(e) for e in file_list)
+
+print(bam_files)
+"
+
+bam_files=$(python -c "$py_script_read_quant")
+
+cd #add output file directory
+
+for bam in $bam_files
+
+do
+    echo $bam
+    
+    #gene level:
+    counted_fileGene=${bam/_1_valAligned.sortedByCoord.out.bam/_Gene.txt} #amend accordingly 
+    featureCounts -p -T 48 -t gene -s 2 -B -g ID -f -C -a /Homo_sapiens.GRCh38.104_IntronsFinalSorted.gff3 -o $counted_fileGene $bam --tmpDir #add temporary directory information and the bam file and annotation file locations
+    
+    #exon parent level: exon-exon of same gene, will include those that overlap with introns of same and other genes
+    counted_fileExonMeta=${bam/_1_valAligned.sortedByCoord.out.bam/_ExonMeta.txt} #amend accordingly 
+    featureCounts -p -T 48 -t exon -s 2 -B -g Parent -C -a Homo_sapiens.GRCh38.104_IntronsFinalSorted.gff3 -o $counted_fileExonMeta $bam --tmpDir #add temporary directory information and the bam file and annotation file locations
+    
+    counted_fileIntronMeta=${bam/_1_valAligned.sortedByCoord.out.bam/_IntronMeta.txt} #amend accordingly 
+    featureCounts -p -T 48 -t intron -s 2 -B -g Parent -C -a Homo_sapiens.GRCh38.104_IntronsFinalSorted.gff3 -o $counted_fileIntronMeta $bam --tmpDir #add temporary directory information and the bam file and annotation file locations
+    
+   echo $"------------------"
+   
+done

@@ -1,0 +1,31 @@
+#PBS -l walltime=24:00:00
+#PBS -l select=1:ncpus=48:mem=124gb:ompthreads=48
+
+module load python
+module load fastqc
+
+py_script_qc="
+import glob, os
+file_list = []
+os.chdir(r'') #location of th read fastq files
+for file in glob.glob('*.fastq.gz'):
+    file_list.append(file)
+file_list= sorted(file_list)
+
+str1 = ' '.join(str(e) for e in file_list)
+
+print(str1)
+"
+
+str1=$(python -c "$py_script_qc")
+b=( $str1 )
+
+for ((i=0;i< ${#b[@]} ;i+=1)); #this runs the program for each file in a directory
+do
+    echo $"Running fastqc on a new file..."
+    cd #output file directory
+    fastqc -t 48 ${b[i]} --outdir=#output directory location add read file location directory information before: ${b[i]}
+    echo $"Your fastqc report is ready"
+done
+
+multiqc .
