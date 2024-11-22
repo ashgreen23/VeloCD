@@ -1,6 +1,6 @@
 # VeloCD
 
-This is the GitHub repository for the VeloCD software tool developed by Dr Claire Dunican and described in *study X*. This tool has adapted the RNA velocity algorithm (velocyto: http://velocyto.org/) to model and visualise transcriptomic trajectories from whole-blood RNA-Seq data. It can also be used to predict different current (diagnostic, classification) and future (prognostic) disease states. The development of this tool is described in *link to PhD thesis*.
+This is the GitHub repository for the VeloCD software tool developed by Dr Claire Dunican and described in *study X*. This tool has adapted the RNA velocity algorithm (velocyto: http://velocyto.org/) to model and visualise transcriptomic trajectories from whole-blood RNA-Seq data. It can also be used to predict different current (diagnostic, classification) and future (prognostic) disease states. The development of this tool is described in *link to PhD thesis*. This software should be run using a minimum of three genes in a dataset.
 
 In brief, this method models the relationship between spliced and unspliced transcript expression to extrapolate future transcriptomic states under the assumption that unspliced transcript levels, characterised by the presence of introns, will provide information about future gene expression because they have not yet been processed. RNA velocity is a deviation from the assumption that gene expression change is not occurring (under a steady state). RNA velocity values are calculated as the observed unspliced transcript expression minus the unspliced transcript expression estimated under this steady state assumption.
 
@@ -177,7 +177,7 @@ The next set of options relate to the visualisation of the RNA velocity fate map
 
 **Metadata Questions**
 
-The algorithm will also ask if you have multiple metadata files and the type of features you have: strings or integers. Please note decimals should be treated as strings. It will also ask if you have only two feature levels in the metadata file "Group" column and if you would like sensitivity and specificity calculated for these two factor levels and which level should be used to calculate each value. Please note the second metadata feature does not need to be used for prediction and can just be used for visual purposes.
+The algorithm will also ask if you have multiple metadata files and the type of features you have: strings or integers. Please note decimals should be treated as strings. It will also ask if you have only two feature levels in the metadata file "Group" column and if you would like sensitivity and specificity calculated for these two factor levels and which level should be used to calculate each value. Please note the second metadata feature does not need to be used for prediction and can just be used for visual purposes. Please ensure there are at least two unique groups in each metadata file.
 
 **Result Output**
 
