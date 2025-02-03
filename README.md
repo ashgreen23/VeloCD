@@ -12,10 +12,10 @@ VeloCD has two main outputs:
 
 VeloCD has two main components. The first is the core VeloCD software tool, which is python based but also calls R functions and packages. It is run from the command line using  a .sh file (RunRNAVelocity.sh). 
 
-The other component is a set of R and shell (.pbs) scripts that allow the user to go from raw fastq files to the input files required by VeloCD: spliced and unspliced transcript expression. These scripts are in the /PreProcessing sub-directory. Example files that can be input straight into this tool are in /ExampleData.
+The other component is a set of R and shell (.pbs) scripts that allow the user to go from raw fastq files to the input files required by VeloCD: spliced and unspliced transcript expression. These scripts have been designed to work on ubuntu computers but can alternatively be run using a command line ubuntu virtual box. These scripts are in the /PreProcessing sub-directory. Example files that can be input straight into this tool are in /ExampleData.
 ## Dependencies
 The following packages are required to run VeloCD, please ensure that you have 
-python3 and R installed. The following dependencies can be installed via the bash command line:
+python 3 and R installed. This software has been tested on R version 3.6.3 onwards (latest version tested: 4.4.2) and Python 3.9 onwards (latest version tested: 3.13). The following dependencies can be installed via the bash command line:
 
 
 ```bash
