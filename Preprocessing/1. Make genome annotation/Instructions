@@ -15,9 +15,9 @@
 cd /media/claired/DATADRIVE2/FEAST/Annotation
 gt gff3 -retainids -addintrons Homo_sapiens.GRCh38.104_Edited.gff3 > Homo_sapiens.GRCh38.104_Edited_IntronsAdded.gff3
 
-#AG has found that the above genometools command doesn't work with multiple sources. To unify them in bash, use the awk command.
+#AG has found that the above genometools command doesn't work with multiple sources. To unify them in bash, use the gawk command (or awk, but I use MacOS).
 #Line nine is chosen here because its the first instance of a source inconsistency: 
-awk -F'\t' '
+gawk -F'\t' '
     BEGIN {OFS=FS}
     $9 ~ /ID=/ {
         match($9, /ID=([^;]+)/, id);
