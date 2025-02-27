@@ -15,6 +15,18 @@
 cd /media/claired/DATADRIVE2/FEAST/Annotation
 gt gff3 -retainids -addintrons Homo_sapiens.GRCh38.104_Edited.gff3 > Homo_sapiens.GRCh38.104_Edited_IntronsAdded.gff3
 
+#AG has found that the above genometools command doesn't work with multiple sources. To unify them in bash, use the awk command.
+#Line nine is chosen here because its the first instance of a source inconsistency: 
+awk -F'\t' '
+    BEGIN {OFS=FS}
+    $9 ~ /ID=/ {
+        match($9, /ID=([^;]+)/, id);
+        if (!(id[1] in source)) source[id[1]] = $2;
+        $2 = source[id[1]];
+    }
+    { print }
+' Homo_sapiens.GRCh38.113_Edited.gff3 > Homo_sapiens.GRCh38.113_Edited_unified_sources.gff3
+
 #Step 5: Run Part 2 of the R code 
 
 #Step 6: add the following line to the final gff3 file
