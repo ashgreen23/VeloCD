@@ -22,7 +22,7 @@ done
 echo "Please select the mode you would like use. Mode 1 (type: M1): for all the sets of files in a directory. Mode 2 (type: M2) for one set of files in the directory (specified above). Each set consists of one or two metadata files (Metadata_*.csv), a spliced transcript expression file (Spliced_*.csv) and unspliced transcript expression file (Unspliced_*.csv), where * is a common substring per set. For example, Spliced_SixteenGeneSignature.csv, where *=SixteenGeneSignature. If you have multiple metadata files per set, please ensure that the second file is titled in the format: MetadataAlt_*.csv."
 
 read RunMode
-
+shopt -s extglob
 until [[ "$RunMode" == @(M1|M2) ]];
 do
     echo "That was not a valid mode, please type M1 or M2."
