@@ -23,7 +23,7 @@ echo "Please select the mode you would like use. Mode 1 (type: M1): for all the 
 
 read RunMode
 
-until [[ "$RunMode" = @("M1"|"M2") ]]
+until [[ "$RunMode" == @(M1|M2) ]];
 do
     echo "That was not a valid mode, please type M1 or M2."
     read RunMode
