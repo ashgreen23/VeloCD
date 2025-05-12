@@ -201,7 +201,7 @@ class VelocytoLoom:
         """
         self.cluster_labels = np.array(cluster_labels)
         if self.cluster_labels.dtype == "O":  # Fixes a bug when importing from pandas
-            self.cluster_labels = self.cluster_labels.astype(np.string_)
+            self.cluster_labels = self.cluster_labels.astype(np.bytes_)#AG has put np.bytes_ here as np.string_ is deprecated from numpy>2.0 and errors
             #print(self.cluster_labels)
             #for label in self.cluster_labels):
             #    str(label,'utf-8')
