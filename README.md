@@ -144,6 +144,16 @@ This software can then be installed using the following code:
 ```bash
 git clone https://github.com/DrClaireDunican/VeloCD.git
 ```
+## Note to self (although this can be adapted for Mac users with Apple Silicon Processors
+You need to ensure that there are no conflicts between the architecture of your python and R installations, and some of the packages that are required for analysis with VeloCD require arch -x86_64 (default in Mac is arm64). To address this, you need to go into the settings for Terminal and open a Rosetta terminal. Then run the code below to check these installations. I then perform my analysis for VeloCD in the environment velo_env. 
+
+```bash
+python -c "import platform; print(platform.machine())"
+arch -x86_64 /bin/zsh
+env /usr/bin/arch -x86_64 /bin/zsh --login
+R --slave -e 'R.version$arch'
+source velo_env/bin/activate
+```
 
 
 ## Operating Instructions
