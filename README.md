@@ -16,7 +16,7 @@ The other component is a set of R and shell (.pbs) scripts that allow the user t
 
 ## Note for Mac Users
 
-In this forked repo I have adapted the python script RNAVelocity_Main.py and the shell script RunRNAVelocity.sh to suit Mac usage. These scripts contain comments specifying where I have made an adaptation but essentially, in the main script, self.embedding_knn is defined more than once and I add to.array() here to prevent the use of the deprecated .A later in the script (this may be helpful to users of other operating systems with newer python versions too). In the running script, the syntax in the choice of M1 or M2 required editing for use in shell on a Mac system. These changes are reflected in this repo.
+In this forked repo I have adapted the python script RNA_Velocity_Main.py and the shell script RunRNAVelocity.sh to suit Mac usage. These scripts contain comments specifying where I have made an adaptation but essentially, in the main script, self.embedding_knn is defined more than once and I add to.array() here to prevent the use of the deprecated .A later in the script (this may be helpful to users of other operating systems with newer python versions too). In the running script, the syntax in the choice of M1 or M2 required editing for use in shell on a Mac system. These changes are reflected in this repo.
 
 ## Dependencies
 The following packages are required to run VeloCD, please ensure that you have 
