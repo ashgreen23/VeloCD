@@ -13,6 +13,11 @@ VeloCD has two main outputs:
 VeloCD has two main components. The first is the core VeloCD software tool, which is python based but also calls R functions and packages. It is run from the command line using  a .sh file (RunRNAVelocity.sh). 
 
 The other component is a set of R and shell (.pbs) scripts that allow the user to go from raw fastq files to the input files required by VeloCD: spliced and unspliced transcript expression. These scripts have been designed to work on ubuntu computers (version 10+) but can alternatively be run via a ubuntu virtual box. These scripts are in the /PreProcessing sub-directory. Example files that can be input straight into this tool are in /ExampleData, alongside expected example output files. This analysis is expected to take approximately 5 minutes if run using the full range of possible hyperparamters.
+
+## Note for Mac Users
+
+In this forked repo I have adapted the python script RNAVelocity_Main.py and the shell script RunRNAVelocity.sh to suit Mac usage. These scripts contain comments specifying where I have made an adaptation but essentially, in the main script, self.embedding_knn is defined more than once and I add to.array() here to prevent the use of the deprecated .A later in the script (this may be helpful to users of other operating systems with newer python versions too). In the running script, the syntax in the choice of M1 or M2 required editing for use in shell on a Mac system. These changes are reflected in this repo.
+
 ## Dependencies
 The following packages are required to run VeloCD, please ensure that you have 
 python 3 and R installed. This software has been tested on R version 3.6.3 onwards (latest version tested: 4.4.2) and Python 3.9 onwards (latest version tested: 3.13). Install time is expected to take up to a few hours if all dependencies require manual installation. The following dependencies can be installed via the bash command line:
@@ -144,8 +149,8 @@ This software can then be installed using the following code:
 ```bash
 git clone https://github.com/DrClaireDunican/VeloCD.git
 ```
-## Note to self (although this can be adapted for Mac users with Apple Silicon Processors)
-You need to ensure that there are no conflicts between the architecture of your python and R installations, and some of the packages that are required for analysis with VeloCD require arch -x86_64 (default in Mac is arm64). To address this, you need to go into the settings for Terminal and open a Rosetta terminal. Then run the code below to check these installations. I then perform my analysis for VeloCD in the environment velo_env. 
+## Note to Mac users (specifically with Apple Silicon Processors)
+You need to ensure that there are no conflicts between the architecture of your python and R installations, and some of the packages that are required for analysis with VeloCD require arch -x86_64 (default in Mac is arm64). To address this, you need to go into the settings for Terminal and open a Rosetta terminal. Then run the code below to check these installations. I personally then perform my analysis for VeloCD in the environment velo_env that reflects this and the above dependencies are installed. 
 
 ```bash
 python -c "import platform; print(platform.machine())"
