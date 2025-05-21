@@ -3318,7 +3318,7 @@ class VelocytoLoom:
                 unitary_vectors /= np.linalg.norm(unitary_vectors, ord=2, axis=0)  # divide by L2
                 np.fill_diagonal(unitary_vectors[0, ...], 0)  # fix nans replace NAN with 0
                 np.fill_diagonal(unitary_vectors[1, ...], 0) #embedding comes from the tSNE
-            self.delta_embedding = (self.transition_prob * unitary_vectors).sum(2) #.A means change the data type from a matrix to an array #unit vector*transition probability
+            self.delta_embedding = (self.transition_prob * unitary_vectors).sum(2) #.A means change the data type from a matrix to an array #unit vector*transition probability - AG removed .A because of alteration of line 3222
             self.delta_embedding -= (self.embedding_knn * unitary_vectors).sum(2) / self.embedding_knn.sum(1).T #AG removed .A 
             self.delta_embedding = self.delta_embedding.T #transposes the vector
             if expression_scaling:
