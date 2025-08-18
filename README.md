@@ -22,7 +22,7 @@ In this forked repo I have adapted the python script RNA_Velocity_Main.py and th
 The following packages are required to run VeloCD, please ensure that you have 
 python 3 and R installed. This software has been tested on R version 3.6.3 onwards (latest version tested: 4.4.2) and Python 3.9 onwards (latest version tested: 3.13). Install time is expected to take up to a few hours if all dependencies require manual installation.
 
-**Note from AG: I found that in the velocyto version that is used in this workflow you need to change np.NAN to np.nan in the estimation.py script that is part of velocyto (this is to match later versions of Python like 3.13). You can do that manually or patch the package using grep prior to running VeloCD).**
+**Note from AG: I found that in the velocyto version that is used in this workflow you need to change np.NAN to np.nan in the estimation.py script that is part of velocyto (this is to match later versions of Python like 3.13). You can do that manually or patch the package using grep prior to running VeloCD.**
 
 The following dependencies can be installed via the bash command line:
 
