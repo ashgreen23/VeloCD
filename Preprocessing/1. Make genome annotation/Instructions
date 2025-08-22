@@ -33,4 +33,3 @@ Step 8: add the following lines to the final GTF file:
 #!genome-date 2013-12
 #!genome-build-accession GCA_000001405.28
 #!genebuild-last-updated 2021-03
-
