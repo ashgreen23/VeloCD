@@ -1,4 +1,12 @@
 SensitivitySpecificity <- function(ResultFileLocation, GeneSignature, MyMetadata, MyMethod, Output, Class1, Class2, InterName, PredGroup, thresholdProb)  {
+    # Print the folder path - added by AG as a debug statement
+  print(paste("ResultFileLocation:", ResultFileLocation))
+
+  # List all files in that folder (full paths) - added by AG as a debug statement
+  all_files <- list.files(path = ResultFileLocation, full.names = TRUE)
+  print("All files found in ResultFileLocation:")
+  print(all_files)
+  
   ResFiles <- list.files(path=ResultFileLocation, pattern="SummaryTable_Sum_SelfNotRemoved_")
   ResFiles <- ResFiles[grepl(InterName, ResFiles) ]
   ResFiles <- ResFiles[grepl(PredGroup, ResFiles) ]
