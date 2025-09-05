@@ -1155,11 +1155,11 @@ class VelocytoLoom:
         if self.corr_calc == "full" or self.corr_calc == "knn_random":
             # NOTE maybe sparse matrix here are slower than dense
             # NOTE if knn_random this could be made much faster either using sparse matrix or neigh_ixs
-            self.transition_prob_UMAP = np.exp(self.corrcoef_UMAP / sigma_corr) * self.embedding_UMAP_knn.A  # naive, the exponential of the correlation coefficient/kernal scaling
+            self.transition_prob_UMAP = np.exp(self.corrcoef_UMAP / sigma_corr) * self.embedding_UMAP_knn.toarray()  # naive, the exponential of the correlation coefficient/kernal scaling, AG aadded to.array()
             self.transition_prob_UMAP /= self.transition_prob_UMAP.sum(1)[:, None]
             if hasattr(self, "corrcoef_random"):
                 logging.debug("Calculate transition probability for negative control")
-                self.transition_prob_UMAP_random_UMAP = np.exp(self.self.corrcoef_random_UMAP / sigma_corr) * self.embedding_UMAP_knn.A  # naive
+                self.transition_prob_UMAP_random_UMAP = np.exp(self.self.corrcoef_random_UMAP / sigma_corr) * self.embedding_UMAP_knn.toarray()  # naive AG added to.array()
                 self.transition_prob_UMAP_random_UMAP /= self.transition_prob_UMAP_random_UMAP.sum(1)[:, None]
             unitary_vectors = self.embedding_UMAP.T[:, None, :] - self.embedding_UMAP.T[:, :, None]  # shape (2,ncells,ncells) #for each cells coordinates - row1: cell1-cell1, cell1-cell2, cell1-cell3 cell1-cell4, cell1-cell1, cell2-cell1, cell3-cell1 etc.
             with np.errstate(divide='ignore', invalid='ignore'):
@@ -1167,20 +1167,20 @@ class VelocytoLoom:
                 np.fill_diagonal(unitary_vectors[0, ...], 0)  # fix nans replace NAN with 0
                 np.fill_diagonal(unitary_vectors[1, ...], 0) #embedding comes from the tSNE
             self.MY_ARROWS_umap = (self.transition_prob_UMAP * unitary_vectors).sum(2) #.A means change the data type from a matrix to an array #unit vector*transition probability, below: transition probab (no. samples x no.samples) is multiplied by each of the three (no.samplesxno.samples) matrices in the unitary vector individually. The result is then summed for each xm y and z across all number of samples rows for each number of sample columns
-            self.MY_ARROWS_umap -= (self.embedding_UMAP_knn.A * unitary_vectors).sum(2) / self.embedding_UMAP_knn.sum(1).A.T
+            self.MY_ARROWS_umap -= (self.embedding_UMAP_knn.toarray() * unitary_vectors).sum(2) / self.embedding_UMAP_knn.sum(1).toarray().T #AG aadded to.array()
             self.MY_ARROWS_umap = self.MY_ARROWS_umap.T #transposes the vector
             if expression_scaling:
                 hi_dim = getattr(self, self.which_hidim)
-                estim_delta = hi_dim.dot(self.transition_prob_UMAP.T) - hi_dim.dot((self.embedding_UMAP_knn.A / self.embedding_UMAP_knn.sum(1).A).T) #this is the same problem as above
+                estim_delta = hi_dim.dot(self.transition_prob_UMAP.T) - hi_dim.dot((self.embedding_UMAP_knn.toarray() / self.embedding_UMAP_knn.sum(1).toarray()).T) #this is the same problem as above, AG aadded to.array()
                 cos_proj = (self.delta_S * estim_delta).sum(0) / np.sqrt((estim_delta**2).sum(0))
                 self.scaling_UMAP = np.clip(cos_proj / scaling_penalty, 0, 1)
                 self.MY_ARROWS_umap = self.MY_ARROWS_umap * self.scaling_UMAP[:, None]
             if hasattr(self, "corrcoef_random"):
                 self.MY_ARROWS_umap_random = (self.transition_prob_UMAP_random_UMAP * unitary_vectors).sum(2)
-                self.MY_ARROWS_umap_random -= (self.embedding_UMAP_knn.A * unitary_vectors).sum(2) / self.embedding_UMAP_knn.sum(1).A.T
+                self.MY_ARROWS_umap_random -= (self.embedding_UMAP_knn.toarray() * unitary_vectors).sum(2) / self.embedding_UMAP_knn.sum(1).toarray().T #AG aadded to.array()
                 self.MY_ARROWS_umap_random = self.MY_ARROWS_umap_random.T
                 if expression_scaling:
-                    estim_delta_rndm = hi_dim.dot(self.transition_prob_UMAP_random_UMAP.T) - hi_dim.dot((self.embedding_UMAP_knn.A / self.embedding_UMAP_knn.sum(1).A).T)
+                    estim_delta_rndm = hi_dim.dot(self.transition_prob_UMAP_random_UMAP.T) - hi_dim.dot((self.embedding_UMAP_knn.toarray() / self.embedding_UMAP_knn.sum(1).toarray()).T) #AG aadded to.array()
                     cos_proj_rndm = (self.delta_S_rndm * estim_delta_rndm).sum(0) / np.sqrt((estim_delta_rndm**2).sum(0))
                     self.scaling_UMAP_rndm = np.clip(cos_proj_rndm / scaling_penalty, 0, 1)
                     self.MY_ARROWS_umap_random = self.MY_ARROWS_umap_random * self.scaling_UMAP_rndm[:, None]
@@ -2236,50 +2236,57 @@ class VelocytoLoom:
             file_name = "CorrelationCoefficients_Raw_PCA.csv"
             tp_df.to_csv(file_name, sep=",", header=True)  
  
+    import sys
 
+    TPMin = int(sys.argv[-12])
+    TPMax = int(sys.argv[-11])
+    TPStep = int(sys.argv[-10])
     def calculate_embedding_shiftPCA(self, sigma_corr: float=0.05, expression_scaling: bool=False, scaling_penalty: float=1., metadataToUse: str="metadata.csv", 
                                  pathToTransitionProbabilityCode: str="/", grouptype: str="Strings", secondgroup: str="metadataVersion.csv", manyfeatures: str="True", 
-                                 grouptype2: str="Strings", Randomsampling: str="False", extraNNvalue: int=5, DE_location: str="/location/", selfCC_folder: str="/location/", 
+                                 grouptype2: str="Strings", Randomsampling: str="False", extraNNvalue: int=5,TPMin: int =2, TPMax: int =4, TPStep: int =1, DE_location: str="/location/", selfCC_folder: str="/location/", 
                                  VecX_location: str="/location/", VecY_loc: str="/location/", VecZloc: str="/location/", TP_folder: str="/location/", 
                                  PCA_GroupLevelTP: str="/location/", 
                                  ThreeDVersion: str="yes", DoSecondPred: str="no", UserThreshold: float=0.5) -> None:
         logging.debug("Calculate transition probability")
-        self.embedding_PCA_Red = self.embedding_PCA[:,:2]
-        if self.corr_calc == "full" or self.corr_calc == "knn_random":
+        # --------- AG MADE THIS A LOOP FOR RANGE OF TPNNs ---------
+        for nn in range(TPMin, TPMax, TPStep):  # TPMin, TPMax, TPStep should come from function arguments or parsed CLI
+            extraNNvalue = nn
+            self.embedding_PCA_Red = self.embedding_PCA[:,:2]
+            if self.corr_calc == "full" or self.corr_calc == "knn_random":
             # NOTE maybe sparse matrix here are slower than dense
             # NOTE if knn_random this could be made much faster either using sparse matrix or neigh_ixs
-            self.transition_prob_PCA_Red = np.exp(self.corrcoef_PCA / sigma_corr) * self.embedding_PCA_knn.A  # naive, the exponential of the correlation coefficient/kernal scaling, AG changed A to toarray()
-            self.transition_prob_PCA_Red /= self.transition_prob_PCA_Red.sum(1)[:, None]
-            if hasattr(self, "corrcoef_random"):
-                logging.debug("Calculate transition probability for negative control")
-                self.transition_prob_PCA_Red_random = np.exp(self.corrcoef_PCA_random / sigma_corr) * self.embedding_PCA_knn.A # naive, AG changed A to toarray()
-                self.transition_prob_PCA_Red_random /= self.transition_prob_PCA_Red_random.sum(1)[:, None]
-            unitary_vectors_PCA_Red = self.embedding_PCA_Red.T[:, None, :] - self.embedding_PCA_Red.T[:, :, None]
-            with np.errstate(divide='ignore', invalid='ignore'):
-                unitary_vectors_PCA_Red /= np.linalg.norm(unitary_vectors_PCA_Red, ord=2, axis=0)  # divide by L2
-                np.fill_diagonal(unitary_vectors_PCA_Red[0, ...], 0)  # fix nans replace NAN with 0
-                np.fill_diagonal(unitary_vectors_PCA_Red[1, ...], 0) #embedding comes from the PCA
-            self.delta_embedding_PCA_Red = (self.transition_prob_PCA_Red * unitary_vectors_PCA_Red).sum(2) #.A means change the data type from a matrix to an array #unit vector*transition probability
-            self.delta_embedding_PCA_Red -= (self.embedding_PCA_knn.A * unitary_vectors_PCA_Red).sum(2) / self.embedding_PCA_knn.sum(1).A.T #AG changed A to toarray()
-            self.delta_embedding_PCA_Red = self.delta_embedding_PCA_Red.T #transposes the vector
-            if expression_scaling:
-                hi_dim = getattr(self, self.which_hidim)
-                estim_delta = hi_dim.dot(self.transition_prob_PCA_Red.T) - hi_dim.dot((self.embedding_PCA_knn.A / self.embedding_PCA_knn.sum(1).A).T) #this is the same problem as above, AG changed A to toarray()
-                cos_proj = (self.delta_S * estim_delta).sum(0) / np.sqrt((estim_delta**2).sum(0))
-                self.scaling_PCA= np.clip(cos_proj / scaling_penalty, 0, 1)
-                self.delta_embedding_PCA_Red = self.delta_embedding_PCA_Red * self.scaling[:, None]
-            if hasattr(self, "corrcoef_random"):
-                self.delta_embedding_PCA_Red_random = (self.transition_prob_PCA_Red_random * unitary_vectors_PCA_Red).sum(2)
-                self.delta_embedding_PCA_Red_random -= (self.embedding_PCA_knn.A * unitary_vectors_PCA_Red).sum(2) / self.embedding_PCA_knn.sum(1).A.T #AG changed A to toarray()
-                self.delta_embedding_PCA_Red_random = self.delta_embedding_PCA_Red_random.T
+                self.transition_prob_PCA_Red = np.exp(self.corrcoef_PCA / sigma_corr) * self.embedding_PCA_knn.toarray()  # naive, the exponential of the correlation coefficient/kernal scaling, AG changed A to to.array()
+                self.transition_prob_PCA_Red /= self.transition_prob_PCA_Red.sum(1)[:, None]
+                if hasattr(self, "corrcoef_random"):
+                    logging.debug("Calculate transition probability for negative control")
+                    self.transition_prob_PCA_Red_random = np.exp(self.corrcoef_PCA_random / sigma_corr) * self.embedding_PCA_knn.toarray() # naive, AG changed A to to.array()
+                    self.transition_prob_PCA_Red_random /= self.transition_prob_PCA_Red_random.sum(1)[:, None]
+                unitary_vectors_PCA_Red = self.embedding_PCA_Red.T[:, None, :] - self.embedding_PCA_Red.T[:, :, None]
+                with np.errstate(divide='ignore', invalid='ignore'):
+                    unitary_vectors_PCA_Red /= np.linalg.norm(unitary_vectors_PCA_Red, ord=2, axis=0)  # divide by L2
+                    np.fill_diagonal(unitary_vectors_PCA_Red[0, ...], 0)  # fix nans replace NAN with 0
+                    np.fill_diagonal(unitary_vectors_PCA_Red[1, ...], 0) #embedding comes from the PCA
+                self.delta_embedding_PCA_Red = (self.transition_prob_PCA_Red * unitary_vectors_PCA_Red).sum(2) #.A means change the data type from a matrix to an array #unit vector*transition probability
+                self.delta_embedding_PCA_Red -= (self.embedding_PCA_knn.toarray() * unitary_vectors_PCA_Red).sum(2) / self.embedding_PCA_knn.toarray().sum(1).T #AG changed A to to.array()
+                self.delta_embedding_PCA_Red = self.delta_embedding_PCA_Red.T #transposes the vector
                 if expression_scaling:
-                    estim_delta_rndm_Red = hi_dim.dot(self.transition_prob_PCA_Red_random.T) - hi_dim.dot((self.embedding_PCA_knn.A / self.embedding_PCA_knn.sum(1).A).T) #AG changed A to toarray()
-                    cos_proj_rndm = (self.delta_S_rndm * estim_delta_rndm_Red).sum(0) / np.sqrt((estim_delta_rndm_Red**2).sum(0))
-                    self.scaling_rndm = np.clip(cos_proj_rndm / scaling_penalty, 0, 1)
-                    self.delta_embedding_PCA_Red_random = self.delta_embedding_PCA_Red_random * self.scaling_rndm[:, None]
-        else:
-            # NOTE should implement a version with cython
-            raise NotImplementedError(f"Weird value self.corr_calc={self.corr_calc}")
+                    hi_dim = getattr(self, self.which_hidim)
+                    estim_delta = hi_dim.dot(self.transition_prob_PCA_Red.T) - hi_dim.dot((self.embedding_PCA_knn.toarray() / self.embedding_PCA_knn.toarray().sum(1))).T #this is the same problem as above, AG changed A to to.array()
+                    cos_proj = (self.delta_S * estim_delta).sum(0) / np.sqrt((estim_delta**2).sum(0))
+                    self.scaling_PCA= np.clip(cos_proj / scaling_penalty, 0, 1)
+                    self.delta_embedding_PCA_Red = self.delta_embedding_PCA_Red * self.scaling[:, None]
+                if hasattr(self, "corrcoef_random"):
+                    self.delta_embedding_PCA_Red_random = (self.transition_prob_PCA_Red_random * unitary_vectors_PCA_Red).sum(2)
+                    self.delta_embedding_PCA_Red_random -= (self.embedding_PCA_knn.toarray() * unitary_vectors_PCA_Red).sum(2) / self.embedding_PCA_knn.toarray().sum(1).T #AG changed A to to.array()
+                    self.delta_embedding_PCA_Red_random = self.delta_embedding_PCA_Red_random.T
+                    if expression_scaling:
+                        estim_delta_rndm_Red = hi_dim.dot(self.transition_prob_PCA_Red_random.T) - hi_dim.dot((self.embedding_PCA_knn.toarray() / self.embedding_PCA_knn.toarray().sum(1))).T #AG changed A to to.array()
+                        cos_proj_rndm = (self.delta_S_rndm * estim_delta_rndm_Red).sum(0) / np.sqrt((estim_delta_rndm_Red**2).sum(0))
+                        self.scaling_rndm = np.clip(cos_proj_rndm / scaling_penalty, 0, 1)
+                        self.delta_embedding_PCA_Red_random = self.delta_embedding_PCA_Red_random * self.scaling_rndm[:, None]
+            else:
+                # NOTE should implement a version with cython
+                raise NotImplementedError(f"Weird value self.corr_calc={self.corr_calc}")
         colnames_cells = list(self.ca["Patients"])
         genes_embedding = np.array(self.delta_embedding_PCA_Red)
         spliced_df = pd.DataFrame(genes_embedding, columns=["x", "y"], index=colnames_cells)
@@ -2342,11 +2349,11 @@ class VelocytoLoom:
             if self.corr_calc == "full" or self.corr_calc == "knn_random":
                 # NOTE maybe sparse matrix here are slower than dense
                 # NOTE if knn_random this could be made much faster either using sparse matrix or neigh_ixs
-                self.transition_prob_PCA_Three = np.exp(self.corrcoef_PCA / sigma_corr) * self.embedding_PCA_knn.A  # naive, the exponential of the correlation coefficient/kernal scaling, #AG changed A to toarray()
+                self.transition_prob_PCA_Three = np.exp(self.corrcoef_PCA / sigma_corr) * self.embedding_PCA_knn.toarray()  # naive, the exponential of the correlation coefficient/kernal scaling, #AG changed A to to.array()
                 self.transition_prob_PCA_Three /= self.transition_prob_PCA_Three.sum(1)[:, None]
                 if hasattr(self, "corrcoef_random"):
                     logging.debug("Calculate transition probability for negative control")
-                    self.transition_prob_PCA_Three_random = np.exp(self.corrcoef_PCA_random / sigma_corr) * self.embedding_PCA_knn.A  # naive, #AG changed A to toarray()
+                    self.transition_prob_PCA_Three_random = np.exp(self.corrcoef_PCA_random / sigma_corr) * self.embedding_PCA_knn.toarray() # naive, #AG changed A to to.array()
                     self.transition_prob_PCA_Three_random /= self.transition_prob_PCA_Three_random.sum(1)[:, None]
                 unitary_vectors_PCA = self.embedding_PCA_Three.T[:, None, :] - self.embedding_PCA_Three.T[:, :, None]  # shape (2,ncells,ncells) #for each cells coordinates - row1: cell1-cell1, cell2-cell1, cell3-cell1 cell4-cell1
                 with np.errstate(divide='ignore', invalid='ignore'):
@@ -2355,20 +2362,20 @@ class VelocytoLoom:
                     np.fill_diagonal(unitary_vectors_PCA[1, ...], 0) #embedding comes from the PCA
                     np.fill_diagonal(unitary_vectors_PCA[2, ...], 0) 
                 self.delta_embedding_PCA_Three = (self.transition_prob_PCA_Three * unitary_vectors_PCA).sum(2) #.A means change the data type from a matrix to an array #unit vector*transition probabilit
-                self.delta_embedding_PCA_Three -= (self.embedding_PCA_knn.A * unitary_vectors_PCA).sum(2) / self.embedding_PCA_knn.sum(1).A.T ##AG changed A to toarray()
+                self.delta_embedding_PCA_Three -= (self.embedding_PCA_knn.toarray() * unitary_vectors_PCA).sum(2) / self.embedding_PCA_knn.toarray().sum(1) ##AG changed A to to.array(), remove .T
                 self.delta_embedding_PCA_Three = self.delta_embedding_PCA_Three.T #transposes the vector
                 if expression_scaling:
                     hi_dim = getattr(self, self.which_hidim)
-                    estim_delta = hi_dim.dot(self.transition_prob_PCA_Three.T) - hi_dim.dot((self.embedding_PCA_knn.A / self.embedding_PCA_knn.sum(1).A).T) #this is the same problem as above, #AG changed A to toarray()
+                    estim_delta = hi_dim.dot(self.transition_prob_PCA_Three.T) - hi_dim.dot((self.embedding_PCA_knn.toarray() / self.embedding_PCA_knn.toarray().sum(1)).T) #this is the same problem as above, #AG changed A to toarray()
                     cos_proj = (self.delta_S * estim_delta).sum(0) / np.sqrt((estim_delta**2).sum(0))
                     self.scaling_PCA= np.clip(cos_proj / scaling_penalty, 0, 1)
                     self.delta_embedding_PCA_Three = self.delta_embedding_PCA_Three * self.scaling[:, None]
                 if hasattr(self, "corrcoef_random"):
                     self.delta_embedding_PCA_Three_random = (self.transition_prob_PCA_Three_random * unitary_vectors_PCA).sum(2)
-                    self.delta_embedding_PCA_Three_random -= (self.embedding_PCA_knn.A * unitary_vectors_PCA).sum(2) / self.embedding_PCA_knn.sum(1).A.T ##AG changed A to toarray()
+                    self.delta_embedding_PCA_Three_random -= (self.embedding_PCA_knn.toarray() * unitary_vectors_PCA).sum(2) / self.embedding_PCA_knn.toarray().sum(1).T ##AG changed A to to.array()
                     self.delta_embedding_PCA_Three_random = self.delta_embedding_PCA_Three_random.T
                     if expression_scaling:
-                        estim_delta_rndm = hi_dim.dot(self.transition_prob_PCA_Three_random.T) - hi_dim.dot((self.embedding_PCA_knn.A / self.embedding_PCA_knn.sum(1).A).T) ##AG changed A to toarray()
+                        estim_delta_rndm = hi_dim.dot(self.transition_prob_PCA_Three_random.T) - hi_dim.dot((self.embedding_PCA_knn.toarray() / self.embedding_PCA_knn.toarray().sum(1)).T) ##AG changed A to to.array()
                         cos_proj_rndm = (self.delta_S_rndm * estim_delta_rndm).sum(0) / np.sqrt((estim_delta_rndm**2).sum(0))
                         self.scaling_rndm = np.clip(cos_proj_rndm / scaling_penalty, 0, 1)
                         self.delta_embedding_PCA_Three_random = self.delta_embedding_PCA_Three_random * self.scaling_rndm[:, None]
@@ -3318,7 +3325,7 @@ class VelocytoLoom:
                 unitary_vectors /= np.linalg.norm(unitary_vectors, ord=2, axis=0)  # divide by L2
                 np.fill_diagonal(unitary_vectors[0, ...], 0)  # fix nans replace NAN with 0
                 np.fill_diagonal(unitary_vectors[1, ...], 0) #embedding comes from the tSNE
-            self.delta_embedding = (self.transition_prob * unitary_vectors).sum(2) #.A means change the data type from a matrix to an array #unit vector*transition probability - AG removed .A because of alteration of line 3222
+            self.delta_embedding = (self.transition_prob * unitary_vectors).sum(2) #.A means change the data type from a matrix to an array #unit vector*transition probability
             self.delta_embedding -= (self.embedding_knn * unitary_vectors).sum(2) / self.embedding_knn.sum(1).T #AG removed .A 
             self.delta_embedding = self.delta_embedding.T #transposes the vector
             if expression_scaling:
