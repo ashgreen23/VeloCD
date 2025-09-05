@@ -2235,7 +2235,7 @@ class VelocytoLoom:
             tp_df = pd.DataFrame(tp, columns=colnames_cells, index=colnames_cells)  # raw cc values withot any alt
             file_name = "CorrelationCoefficients_Raw_PCA.csv"
             tp_df.to_csv(file_name, sep=",", header=True)  
- 
+ 	#AG added the definitions of TPMin, TPMax TPStep below and incorported a loop so that they are directly imported from the shell script used to execute veloCD. These can then be flexible to whatever the user enters.
     import sys
 
     TPMin = int(sys.argv[-12])
@@ -4606,3 +4606,4 @@ if str(sys.argv[19]) == "True":
         plt.close("all")
 
 """
+
