@@ -122,7 +122,7 @@ AnalyseResultsNNLevel <- function(PCAYes, PCAYes3D, tSNEYes, UMAPYes, UMAPYes3D,
     for (TPNNvalue in NNList_tSNE) { #For each diff TPNN res:
       df <- data.frame(matrix(ncol = 3, nrow = 0))
       for (subject in MyMetaFiles) {
-        ResFile <- list.files(path = paste0(MyLocation, "Results/Files/tSNE/Transition_Probability/Group_Level/", subject), pattern = paste0(TPNNvalue, "_"))
+        ResFile <- list.files(path = paste0(MyLocation, "Results/Files/tSNE/Transition_Probability/Group_Level/", subject), pattern = TPNNvalue)
         ResFile <- ResFile[grepl("SummaryTable", ResFile)]
         ResFile <- ResFile[grepl("Group1", ResFile)] # or 2?
         MyResFile <- read.csv(paste0(MyLocation, "Results/Files/tSNE/Transition_Probability/Group_Level/", subject, "/", ResFile))
@@ -240,4 +240,5 @@ setwd("/Summary/")
 png("TPNN_Range.png", height=500, width=700)
 p <- ggplot(Resys, aes(x=TPNNVal, y=Vals)) + geom_point(size=3) + theme_bw() + theme(text=element_text(size=20)) + xlab("\nTPNN") + ylab("Correctly Preicted (%)\n")
 print(p)
+
 dev.off()
