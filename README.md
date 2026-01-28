@@ -100,7 +100,10 @@ sudo apt -y install libfontconfig1-dev
 
 sudo apt-get install libharfbuzz-dev libfribidi-dev libfontconfig1-dev
 
-sudo apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev 
+sudo apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+
+#AG on 28/01/26 installed VeloCD using these requirements listed in the existing repo on DCM's PC in 5L15. In order to compile rpy2 and install it, you also need to run the following:
+sudo apt install libtirpc-dev
 ```  
 The following packages need to be installed in R:
 
