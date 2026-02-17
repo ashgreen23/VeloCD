@@ -154,7 +154,7 @@ install.packages("scatterplot3d")
 
 This software can then be installed using the following code:
 ```bash
-git clone https://github.com/DrClaireDunican/VeloCD.git
+git clone https://github.com/ashgreen23/VeloCD.git
 ```
 ## Note to Mac users (specifically with Apple Silicon Processors)
 You need to ensure that there are no conflicts between the architecture of your python and R installations, and some of the packages that are required for analysis with VeloCD require arch -x86_64 (default in Mac is arm64). To address this, you need to go into the settings for Terminal and open a Rosetta terminal. Then run the code below to check these installations. I personally then perform my analysis for VeloCD in the environment velo_env that reflects this and the above dependencies are installed. 
