@@ -104,7 +104,18 @@ sudo apt-get install libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
 
 #AG on 28/01/26 installed VeloCD using these requirements listed in the existing repo on DCM's PC in 5L15. In order to compile rpy2 and install it, you also need to run the following:
 sudo apt install libtirpc-dev
-```  
+
+```
+The following dependencies are required if you want to run the GPU adapted scripts (see subfolder):
+
+```bash
+pip install numpy==2.3.5 #numpy 2.4 is not usable with the cupy packages
+pip install "cupy-cuda12x[ctk]"
+
+sudo apt install nvidia-cuda-toolkit
+nccv --version #output will tell you 11 or 12 depending on what you have (12 is newer and I have 12)
+pip install cuml-cu12 #use cuml-cu11 if you have v11 output from line above
+```
 The following packages need to be installed in R:
 
 ```bash
